@@ -2365,6 +2365,303 @@ int main() {
         }
     }
 }
+#include <iostream>
+#include <vector>
+#include <map>
+#include <utility>
+
+using namespace std;
+
+#define MAX 100
+
+class Sparse
+{
+public:
+    int a[MAX][MAX];
+    int s[MAX][3]; 
+    int r = 0, c = 0, nz = 0;
+
+    void read();
+    void convert();
+    void display();
+    Sparse transpose() const;
+};
+
+void Sparse::read()
+{
+    cout << "Enter dimensions of matrix (rows cols): ";
+    cin >> r >> c;
+    cout << "Enter values (row-major, " << r << "x" << c << "):\n";
+    for (int i = 0; i < r; ++i)
+        for (int j = 0; j < c; ++j)
+            cin >> a[i][j];
+}
+
+void Sparse::convert()
+{
+    s[0][0] = r;
+    s[0][1] = c;
+    int k = 1;
+    for (int i = 0; i < r; ++i)
+    {
+        for (int j = 0; j < c; ++j)
+        {
+            if (a[i][j] != 0)
+            {
+                s[k][0] = i;
+                s[k][1] = j;
+                s[k][2] = a[i][j];
+                ++k;
+            }
+        }
+    }
+    s[0][2] = k - 1;
+    nz = s[0][2];
+}
+
+void Sparse::display()
+{
+    cout << "Triplet (row col val), header = (rows cols nz):\n";
+    for (int i = 0; i <= nz; ++i)
+    {
+        cout << s[i][0] << " " << s[i][1] << " " << s[i][2] << "\n";
+    }
+}
+
+
+Sparse Sparse::transpose() const
+{
+    Sparse t;
+    // header
+    t.s[0][0] = s[0][1];
+    t.s[0][1] = s[0][0];
+    t.s[0][2] = s[0][2];
+    t.r = t.s[0][0];
+    t.c = t.s[0][1];
+    t.nz = t.s[0][2];
+
+    int k = 1;
+    for (int i = 1; i <= nz; ++i)
+    {
+        t.s[k][0] = s[i][1];
+        t.s[k][1] = s[i][0];
+        t.s[k][2] = s[i][2];
+        ++k;
+    }
+    return t;
+}
+
+Sparse add(const Sparse &s1, const Sparse &s2)
+{
+    Sparse sum;
+    if (s1.r != s2.r || s1.c != s2.c)
+    {
+        cerr << "Error: matrix dimensions must match for addition.\n";
+        return sum;
+    }
+
+    sum.s[0][0] = sum.r = s1.r;
+    sum.s[0][1] = sum.c = s1.c;
+
+    int i = 1, j = 1, k = 1;
+    while (i <= s1.nz && j <= s2.nz)
+    {
+        int r1 = s1.s[i][0], c1 = s1.s[i][1];
+        int r2 = s2.s[j][0], c2 = s2.s[j][1];
+
+        if (r1 == r2 && c1 == c2)
+        {
+            int val = s1.s[i][2] + s2.s[j][2];
+            if (val != 0)
+            {
+                sum.s[k][0] = r1;
+                sum.s[k][1] = c1;
+                sum.s[k][2] = val;
+                ++k;
+            }
+            ++i; ++j;
+        }
+        else if (r1 < r2 || (r1 == r2 && c1 < c2))
+        {
+            sum.s[k][0] = r1;
+            sum.s[k][1] = c1;
+            sum.s[k][2] = s1.s[i][2];
+            ++k; ++i;
+        }
+        else
+        {
+            sum.s[k][0] = r2;
+            sum.s[k][1] = c2;
+            sum.s[k][2] = s2.s[j][2];
+            ++k; ++j;
+        }
+    }
+
+    while (i <= s1.nz)
+    {
+        sum.s[k][0] = s1.s[i][0];
+        sum.s[k][1] = s1.s[i][1];
+        sum.s[k][2] = s1.s[i][2];
+        ++k; ++i;
+    }
+    while (j <= s2.nz)
+    {
+        sum.s[k][0] = s2.s[j][0];
+        sum.s[k][1] = s2.s[j][1];
+        sum.s[k][2] = s2.s[j][2];
+        ++k; ++j;
+    }
+
+    sum.nz = sum.s[0][2] = k - 1;
+    return sum;
+}
+
+Sparse multiply(const Sparse &A, const Sparse &B)
+{
+    Sparse product;
+    if (A.c != B.r)
+    {
+        cerr << "Error: incompatible dimensions for multiplication (A.cols must == B.rows).\n";
+        return product;
+    }
+
+    product.r = product.s[0][0] = A.r;
+    product.c = product.s[0][1] = B.c;
+
+    // Using map here instead of an array so we don't need to manually add values later, it can be done while iterating.
+    map<pair<int,int>, int> accum;
+    for (int i = 1; i <= A.nz; ++i)
+    {
+        for (int j = 1; j <= B.nz; ++j)
+        {
+            if (A.s[i][1] == B.s[j][0])
+            {
+                int r = A.s[i][0];
+                int c = B.s[j][1];
+                int v = A.s[i][2] * B.s[j][2];
+                accum[make_pair(r,c)] += v;
+            }
+        }
+    }
+
+    // convert map to triplet list
+    int k = 1;
+    for (auto &entry : accum)
+    {
+        if (entry.second != 0)
+        {
+            product.s[k][0] = entry.first.first;
+            product.s[k][1] = entry.first.second;
+            product.s[k][2] = entry.second;
+            ++k;
+        }
+    }
+    product.nz = product.s[0][2] = k - 1;
+    return product;
+}
+
+Sparse ftranspose(const Sparse &s)
+{
+    Sparse res;
+    res.r = res.s[0][0] = s.c;
+    res.c = res.s[0][1] = s.r;
+    res.nz = res.s[0][2] = s.nz;
+
+    if (s.nz == 0) return res;
+
+    vector<int> freq(s.c, 0);
+    vector<int> cumfreq(s.c, 0);
+
+    for (int i = 1; i <= s.nz; ++i)
+        ++freq[s.s[i][1]];
+
+    cumfreq[0] = 1;
+    for (int i = 1; i < s.c; ++i)
+        cumfreq[i] = cumfreq[i-1] + freq[i-1];
+
+    for (int i = 1; i <= s.nz; ++i)
+    {
+        int col = s.s[i][1];
+        int loc = cumfreq[col];
+        res.s[loc][0] = s.s[i][1];
+        res.s[loc][1] = s.s[i][0];
+        res.s[loc][2] = s.s[i][2];
+        ++cumfreq[col];
+    }
+    return res;
+}
+
+int main()
+{
+    int choice = 0;
+    Sparse s1, s2;
+
+    while (choice != 7)
+    {
+        cout << "\nMenu:\n"
+             << "1 - Read and convert Matrix A\n"
+             << "2 - Read and convert Matrix B\n"
+             << "3 - Display A and B (sparse)\n"
+             << "4 - Add A + B\n"
+             << "5 - Multiply A * B\n"
+             << "6 - Transpose A (simple) and fast-transpose A\n"
+             << "7 - Exit\n"
+             << "Enter choice: ";
+        cin >> choice;
+
+        switch (choice)
+        {
+        case 1:
+            s1.read();
+            s1.convert();
+            cout << "A converted.\n";
+            break;
+        case 2:
+            s2.read();
+            s2.convert();
+            cout << "B converted.\n";
+            break;
+        case 3:
+            cout << "Matrix A (sparse):\n";
+            s1.display();
+            cout << "Matrix B (sparse):\n";
+            s2.display();
+            break;
+        case 4:
+        {
+            Sparse sum = add(s1, s2);
+            cout << "A + B (sparse):\n";
+            sum.display();
+            break;
+        }
+        case 5:
+        {
+            Sparse prod = multiply(s1, s2);
+            cout << "A * B (sparse):\n";
+            prod.display();
+            break;
+        }
+        case 6:
+        {
+            cout << "Simple transpose of A:\n";
+            Sparse t = s1.transpose();
+            t.display();
+            cout << "Fast transpose of A:\n";
+            Sparse ft = ftranspose(s1);
+            ft.display();
+            break;
+        }
+        case 7:
+            cout << "Exiting.\n";
+            break;
+        default:
+            cout << "Invalid choice.\n";
+            break;
+        }
+    }
+
+    return 0;
+}
 
 #include <bits/stdc++.h>
 using namespace std;
