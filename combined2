@@ -1,0 +1,2395 @@
+#include <iostream>
+#include <vector>
+#include <tuple>
+
+using namespace std;
+
+#define N 10
+
+class Student{
+	public:
+	int roll;
+	string name;
+	string dept;
+	float sgpa;
+	
+	Student(){}
+	
+	Student(string name, int roll, string dept, float sgpa){
+		this->name = name;
+		this->roll = roll;
+		this->dept = dept;
+		this->sgpa = sgpa;
+	}
+};
+
+void sort_roll(Student students[]){
+	// Bubble sort
+	bool swapped;
+    do{
+        swapped = false;
+        for (int i = 1; i < N; i++){
+            if (students[i-1].roll > students[i].roll){
+                swap(students[i-1], students[i]);
+                swapped = true;
+        	}
+		}
+    }while(!swapped);
+}
+
+void sort_name(Student students[]){
+	// Insertion sort
+	int i = 1;
+	while (i < N){
+	    int j = i;
+	    while (j > 0 && students[j-1].name > students[j].name){
+	        swap(students[j], students[j-1]);
+	        j--;
+	    }
+	    i++;
+	}
+}
+
+void sort_sgpa(Student students[]){
+	// Quick sort
+	
+}
+int search_sgpa(Student students[], float sgpa){
+	// Linear Search, returns first occurence
+	vector<int> matches;
+	for(int i = 0; i < N; i++){
+		if(students[i].sgpa == sgpa){
+			return i;
+		}
+	}
+	return -1;
+}
+
+int search_name(Student students[], string name){
+	// Binary search, assumes sorted array, returns first occurence
+    int start = 0, end = N, mid;
+	do{
+		mid = (start + end) / 2;
+		if(students[mid].name < name) end = mid - 1;
+		else if(students[mid].name > name) start = mid + 1;
+		else {
+			while(students[mid].name == name) mid--;
+			return mid;
+		}
+	}while(start <= end);
+	return -1;
+}
+
+void print_students(const Student students[]) {
+    cout << "Roll No\tName\tDept\tSGPA" << endl;
+    for (int i = 0; i < N; i++) {
+        cout << students[i].roll << "\t" << students[i].name << "\t" << students[i].dept << "\t" << students[i].sgpa << endl;
+    }
+}
+
+void print_students(const Student students[], int n) {
+    cout << "Roll No\tName\tDept\tSGPA" << endl;
+    for (int i = 0; i < n; i++) {
+        cout << students[i].roll << "\t" << students[i].name << "\t" << students[i].dept << "\t" << students[i].sgpa << endl;
+    }
+}
+
+int main(){
+	Student students[N] = {
+        Student("Alice", 1005, "CSE", 8.5),
+        Student("Bob", 1012, "ECE", 7.8),
+        Student("Charlie", 1001, "ME", 9.2),
+        Student("David", 1010, "CSE", 7.6),
+        Student("Eve", 1003, "IT", 8.9),
+        Student("Frank", 1004, "CSE", 6.5),
+        Student("Grace", 1006, "CSE", 8.0),
+        Student("Heidi", 1008, "ECE", 9.0),
+        Student("Ivan", 1013, "IT", 8.2),
+        Student("Judy", 1007, "ME", 7.4)
+    };
+    
+    print_students(students);
+    
+    sort_roll(students);
+    print_students(students);
+    
+    sort_name(students);
+    cout << "------Alphabetically-------" << endl;
+    print_students(students);
+    
+    sort_sgpa(students);
+    cout << "--------Top 10 SGPA-------" << endl;
+    print_students(students, 10);
+    
+    
+}
+
+
+#include <iostream>
+#include <string>
+using namespace std;
+
+class Book {
+public:
+    int book_id;
+    string title;
+    string author;
+    int year;
+    string genre;
+    float price;
+    int pages;
+    string publisher;
+
+    void read() {
+        cout << "Enter Book ID: ";
+        cin >> book_id;
+        cout << "Enter Title: ";
+        cin.ignore();
+        getline(cin, title);
+        cout << "Enter Author: ";
+        getline(cin, author);
+        cout << "Enter Year of Publication: ";
+        cin >> year;
+        cout << "Enter Genre: ";
+        cin.ignore();
+        getline(cin, genre);
+        cout << "Enter Price: ";
+        cin >> price;
+        cout << "Enter Number of Pages: ";
+        cin >> pages;
+        cout << "Enter Publisher: ";
+        cin.ignore();
+        getline(cin, publisher);
+    }
+
+    void display() const {
+        cout << "\n--- Book Information ---\n";
+        cout << "Book ID: " << book_id << endl;
+        cout << "Title: " << title << endl;
+        cout << "Author: " << author << endl;
+        cout << "Year: " << year << endl;
+        cout << "Genre: " << genre << endl;
+        cout << "Price: Rs " << price << endl;
+        cout << "Pages: " << pages << endl;
+        cout << "Publisher: " << publisher << endl;
+        cout << "------------------------\n";
+    }
+
+    void updateBookDetail(Book books[], int n) {
+        int id;
+        cout << "Enter Book ID to update: ";
+        cin >> id;
+        bool found = false;
+
+        for (int i = 0; i < n; i++) {
+            if (books[i].book_id == id) {
+                found = true;
+                cout << "Book found! Current details:\n";
+                books[i].display();
+
+                int choice;
+                cout << "\nWhat do you want to update?\n";
+                cout << "1. Title\n2. Author\n3. Year\n4. Genre\n5. Price\n6. Pages\n7. Publisher\n";
+                cout << "Enter choice: ";
+                cin >> choice;
+                cin.ignore();
+
+                switch (choice) {
+                    case 1: cout << "Enter new title: "; getline(cin, books[i].title); break;
+                    case 2: cout << "Enter new author: "; getline(cin, books[i].author); break;
+                    case 3: cout << "Enter new year: "; cin >> books[i].year; break;
+                    case 4: cout << "Enter new genre: "; getline(cin, books[i].genre); break;
+                    case 5: cout << "Enter new price: "; cin >> books[i].price; break;
+                    case 6: cout << "Enter new pages: "; cin >> books[i].pages; break;
+                    case 7: cout << "Enter new publisher: "; getline(cin, books[i].publisher); break;
+                    default: cout << "Invalid choice!\n";
+                }
+                cout << "Book detail updated successfully!\n";
+                break;
+            }
+        }
+
+        if (!found)
+            cout << "Book with ID " << id << " not found.\n";
+    }
+
+    void deleteBook(Book books[], int &n) {
+        int id;
+        cout << "Enter Book ID to delete: ";
+        cin >> id;
+        bool found = false;
+
+        for (int i = 0; i < n; i++) {
+            if (books[i].book_id == id) {
+                for (int j = i; j < n - 1; j++)
+                    books[j] = books[j + 1];
+                n--;
+                cout << "Book deleted successfully!\n";
+                found = true;
+                break;
+            }
+        }
+
+        if (!found)
+            cout << "Book with ID " << id << " not found.\n";
+    }
+};
+
+int main() {
+    Book books[30];
+    int n, choice, t;
+    Book manager;
+
+    cout << "Enter number of Books: ";
+    cin >> n;
+
+    do {
+        cout << "\n===== Book Management System =====\n";
+        cout << "1. Input book details\n";
+        cout << "2. Display all books\n";
+        cout << "3. Insert new books\n";
+        cout << "4. Update book details\n";
+        cout << "5. Delete a book\n";
+        cout << "6. Exit\n";
+        cout << "Enter choice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                for (int i = 0; i < n; i++) {
+                    cout << "\nEnter details for book " << (i + 1) << ":\n";
+                    books[i].read();
+                }
+                break;
+
+            case 2:
+                for (int i = 0; i < n; i++) {
+                    cout << "\nDisplaying details of book " << (i + 1) << ":\n";
+                    books[i].display();
+                }
+                break;
+
+            case 3:
+                cout << "Enter number of books to insert: ";
+                cin >> t;
+                if (n + t <= 30) {
+                    for (int i = n; i < n + t; i++) {
+                        cout << "\nEnter details for new book " << (i + 1) << ":\n";
+                        books[i].read();
+                    }
+                    n += t;
+                } else {
+                    cout << "Cannot add more than 30 books.\n";
+                }
+                break;
+
+            case 4:
+                manager.updateBookDetail(books, n);
+                break;
+
+            case 5:
+                manager.deleteBook(books, n);
+                break;
+
+            case 6:
+                cout << "Exiting program...\n";
+                break;
+
+            default:
+                cout << "Invalid choice! Try again.\n";
+        }
+
+    } while (choice != 6);
+
+    return 0;
+}
+
+#include <iostream>
+using namespace std;
+
+struct Data {
+    int id;
+
+    void read() {
+        cout << "Enter Passenger ID: ";
+        cin >> id;
+    }
+
+    void display() {
+        cout << "Passenger ID: " << id << endl;
+    }
+
+    bool match(Data d) {
+        return id == d.id;
+    }
+
+    void update() {
+        cout << "Enter new Passenger ID: ";
+        cin >> id;
+    }
+
+    bool operator>(const Data& other) { return id > other.id; }
+    bool operator<(const Data& other) { return id < other.id; }
+};
+
+struct Node {
+    Data data;
+    Node* next;
+    Node(Data d) : data(d), next(NULL) {}
+};
+
+class CSLL {
+public:
+    Node* head;
+    CSLL() { head = NULL; }
+
+    void create();
+    void display();
+    void insert();
+    void remove();
+    void update();
+    void sort();
+    Node* search(Data);
+};
+
+void CSLL::create() {
+    if (head != NULL) {
+        cout << "List already exists.\n";
+        return;
+    }
+
+    cout << "Creating passenger list...\n";
+    Data d;
+    d.read();
+    head = new Node(d);
+    head->next = head;
+
+    int choice;
+    Node* current = head;
+    do {
+        cout << "1. Add another passenger\n0. Stop\nEnter choice: ";
+        cin >> choice;
+        if (choice == 1) {
+            d.read();
+            Node* temp = new Node(d);
+            temp->next = head;
+            current->next = temp;
+            current = temp;
+        }
+    } while (choice != 0);
+}
+
+void CSLL::display() {
+    if (!head) {
+        cout << "No passengers in the list.\n";
+        return;
+    }
+
+    cout << "\n--- Passenger List ---\n";
+    Node* temp = head;
+    do {
+        temp->data.display();
+        temp = temp->next;
+    } while (temp != head);
+    cout << "----------------------\n";
+}
+
+void CSLL::insert() {
+    int choice;
+    Data d;
+    cout << "\nInsert Menu:\n";
+    cout << "1. At beginning\n2. At end\n3. After specific ID\nEnter choice: ";
+    cin >> choice;
+    d.read();
+    Node* new_node = new Node(d);
+
+    if (!head) {  // Empty list
+        head = new_node;
+        new_node->next = head;
+        return;
+    }
+
+    if (choice == 1) {  // Insert at beginning
+        Node* last = head;
+        while (last->next != head)
+            last = last->next;
+        new_node->next = head;
+        last->next = new_node;
+        head = new_node;
+    }
+    else if (choice == 2) {  // Insert at end
+        Node* last = head;
+        while (last->next != head)
+            last = last->next;
+        last->next = new_node;
+        new_node->next = head;
+    }
+    else if (choice == 3) {  // Insert after specific ID
+        Data target;
+        cout << "Enter Passenger ID to insert after: ";
+        cin >> target.id;
+        Node* temp = head;
+        do {
+            if (temp->data.match(target)) {
+                new_node->next = temp->next;
+                temp->next = new_node;
+                return;
+            }
+            temp = temp->next;
+        } while (temp != head);
+        cout << "Passenger not found.\n";
+        delete new_node;
+    }
+    else {
+        cout << "Invalid choice.\n";
+        delete new_node;
+    }
+}
+
+void CSLL::remove() {
+    if (!head) {
+        cout << "List is empty.\n";
+        return;
+    }
+
+    int choice;
+    cout << "\nDelete Menu:\n";
+    cout << "1. First passenger\n2. Last passenger\n3. By ID\nEnter choice: ";
+    cin >> choice;
+
+    if (choice == 1) {  // Delete first
+        Node* last = head;
+        while (last->next != head)
+            last = last->next;
+
+        Node* temp = head;
+        if (head->next == head)
+            head = NULL;
+        else {
+            head = head->next;
+            last->next = head;
+        }
+        delete temp;
+    }
+    else if (choice == 2) {  // Delete last
+        if (head->next == head) {
+            delete head;
+            head = NULL;
+            return;
+        }
+
+        Node* temp = head;
+        Node* prev = NULL;
+        while (temp->next != head) {
+            prev = temp;
+            temp = temp->next;
+        }
+        prev->next = head;
+        delete temp;
+    }
+    else if (choice == 3) {  // Delete by ID
+        Data target;
+        cout << "Enter Passenger ID to delete: ";
+        cin >> target.id;
+
+        Node* temp = head;
+        Node* prev = NULL;
+        do {
+            if (temp->data.match(target))
+                break;
+            prev = temp;
+            temp = temp->next;
+        } while (temp != head);
+
+        if (!temp || temp == head && !temp->data.match(target)) {
+            cout << "Passenger not found.\n";
+            return;
+        }
+
+        if (temp == head && temp->next == head) {
+            delete head;
+            head = NULL;
+            return;
+        }
+
+        if (temp == head) {
+            Node* last = head;
+            while (last->next != head)
+                last = last->next;
+            head = head->next;
+            last->next = head;
+            delete temp;
+        } else {
+            prev->next = temp->next;
+            delete temp;
+        }
+    }
+    else {
+        cout << "Invalid choice.\n";
+    }
+}
+
+void CSLL::update() {
+    if (!head) {
+        cout << "List is empty.\n";
+        return;
+    }
+
+    Data target;
+    cout << "Enter Passenger ID to update: ";
+    cin >> target.id;
+
+    Node* temp = search(target);
+    if (temp) {
+        cout << "Current info: ";
+        temp->data.display();
+        temp->data.update();
+        cout << "Updated successfully.\n";
+    } else {
+        cout << "Passenger not found.\n";
+    }
+}
+
+void CSLL::sort() {
+    if (!head || head->next == head) return;
+
+    Node* i = head;
+    do {
+        Node* j = i->next;
+        while (j != head) {
+            if (i->data > j->data)
+                swap(i->data, j->data);
+            j = j->next;
+        }
+        i = i->next;
+    } while (i->next != head);
+
+    cout << "List sorted by Passenger ID.\n";
+}
+
+Node* CSLL::search(Data d) {
+    if (!head) return NULL;
+    Node* temp = head;
+    do {
+        if (temp->data.match(d))
+            return temp;
+        temp = temp->next;
+    } while (temp != head);
+    return NULL;
+}
+
+int main() {
+    CSLL list;
+    int choice;
+    while (true) {
+        cout << "\n--- Railway Reservation Menu ---\n";
+        cout << "1. Create list\n2. Display list\n3. Insert passenger\n4. Delete passenger\n5. Update passenger\n6. Sort list\n7. Exit\nEnter choice: ";
+        cin >> choice;
+        switch (choice) {
+            case 1: list.create(); break;
+            case 2: list.display(); break;
+            case 3: list.insert(); break;
+            case 4: list.remove(); break;
+            case 5: list.update(); break;
+            case 6: list.sort(); break;
+            case 7: cout << "Exiting...\n"; return 0;
+            default: cout << "Invalid choice.\n"; break;
+        }
+    }
+}
+
+#include <iostream>
+using namespace std;
+
+struct Data {
+    int id;
+
+    void read() {
+        cout << "Enter Passenger ID: ";
+        cin >> id;
+    }
+
+    void display() {
+        cout << "Passenger ID: " << id << endl;
+    }
+
+    bool match(Data d) {
+        return id == d.id;
+    }
+
+    void update() {
+        cout << "Enter new Passenger ID: ";
+        cin >> id;
+    }
+
+    bool operator>(const Data& other) { return id > other.id; }
+    bool operator<(const Data& other) { return id < other.id; }
+};
+
+struct Node {
+    Data data;
+    Node* next;
+    Node* prev;
+    Node(Data d) : data(d), next(NULL), prev(NULL) {}
+};
+
+class DLL {
+public:
+    Node* head;
+    DLL() { head = NULL; }
+
+    void create();
+    void display();
+    void insert();
+    void remove();
+    void update();
+    void sort();
+    Node* search(Data);
+};
+
+void DLL::create() {
+    if (head != NULL) {
+        cout << "List already exists.\n";
+        return;
+    }
+
+    cout << "Creating passenger list...\n";
+    Data d;
+    d.read();
+    head = new Node(d);
+
+    int choice;
+    Node* current = head;
+    do {
+        cout << "1. Add another passenger\n0. Stop\nEnter choice: ";
+        cin >> choice;
+        if (choice == 1) {
+            d.read();
+            Node* temp = new Node(d);
+            current->next = temp;
+            temp->prev = current;
+            current = temp;
+        }
+    } while (choice != 0);
+}
+
+void DLL::display() {
+    if (!head) {
+        cout << "No passengers in the list.\n";
+        return;
+    }
+    cout << "\n--- Passenger List ---\n";
+    Node* temp = head;
+    while (temp) {
+        temp->data.display();
+        temp = temp->next;
+    }
+    cout << "----------------------\n";
+}
+
+void DLL::insert() {
+    int choice;
+    Data d;
+    cout << "\nInsert Menu:\n";
+    cout << "1. At beginning\n2. At end\n3. After specific ID\n4. Before specific ID\nEnter choice: ";
+    cin >> choice;
+    d.read();
+    Node* new_node = new Node(d);
+
+    if (choice == 1) {  // Insert at beginning
+        if (!head) head = new_node;
+        else {
+            new_node->next = head;
+            head->prev = new_node;
+            head = new_node;
+        }
+    }
+    else if (choice == 2) {  // Insert at end
+        if (!head) head = new_node;
+        else {
+            Node* temp = head;
+            while (temp->next) temp = temp->next;
+            temp->next = new_node;
+            new_node->prev = temp;
+        }
+    }
+    else if (choice == 3) {  // Insert after specific ID
+        if (!head) {
+            cout << "List is empty.\n";
+            delete new_node;
+            return;
+        }
+        Data target;
+        cout << "Enter Passenger ID to insert after: ";
+        cin >> target.id;
+
+        Node* temp = head;
+        while (temp && !temp->data.match(target))
+            temp = temp->next;
+
+        if (temp) {
+            new_node->next = temp->next;
+            new_node->prev = temp;
+            if (temp->next)
+                temp->next->prev = new_node;
+            temp->next = new_node;
+        } else {
+            cout << "Passenger not found.\n";
+            delete new_node;
+        }
+    }
+    else if (choice == 4) {  // Insert before specific ID
+        if (!head) {
+            cout << "List is empty.\n";
+            delete new_node;
+            return;
+        }
+        Data target;
+        cout << "Enter Passenger ID to insert before: ";
+        cin >> target.id;
+
+        Node* temp = head;
+        while (temp && !temp->data.match(target))
+            temp = temp->next;
+
+        if (!temp) {
+            cout << "Passenger not found.\n";
+            delete new_node;
+            return;
+        }
+
+        new_node->next = temp;
+        new_node->prev = temp->prev;
+        if (temp->prev)
+            temp->prev->next = new_node;
+        else
+            head = new_node;
+        temp->prev = new_node;
+    }
+    else {
+        cout << "Invalid choice.\n";
+        delete new_node;
+    }
+}
+
+void DLL::remove() {
+    if (!head) {
+        cout << "List is empty.\n";
+        return;
+    }
+
+    int choice;
+    cout << "\nDelete Menu:\n";
+    cout << "1. First passenger\n2. Last passenger\n3. By ID\nEnter choice: ";
+    cin >> choice;
+
+    if (choice == 1) {  // Delete first
+        Node* temp = head;
+        head = head->next;
+        if (head) head->prev = NULL;
+        delete temp;
+    }
+    else if (choice == 2) {  // Delete last
+        if (!head->next) {
+            delete head;
+            head = NULL;
+        } else {
+            Node* temp = head;
+            while (temp->next) temp = temp->next;
+            temp->prev->next = NULL;
+            delete temp;
+        }
+    }
+    else if (choice == 3) {  // Delete by ID
+        Data target;
+        cout << "Enter Passenger ID to delete: ";
+        cin >> target.id;
+
+        Node* temp = head;
+        while (temp && !temp->data.match(target))
+            temp = temp->next;
+
+        if (!temp) {
+            cout << "Passenger not found.\n";
+            return;
+        }
+
+        if (temp == head)
+            head = temp->next;
+
+        if (temp->next)
+            temp->next->prev = temp->prev;
+
+        if (temp->prev)
+            temp->prev->next = temp->next;
+
+        delete temp;
+    }
+    else {
+        cout << "Invalid choice.\n";
+    }
+}
+
+void DLL::update() {
+    if (!head) {
+        cout << "List is empty.\n";
+        return;
+    }
+
+    Data target;
+    cout << "Enter Passenger ID to update: ";
+    cin >> target.id;
+
+    Node* temp = search(target);
+    if (temp) {
+        cout << "Current info: ";
+        temp->data.display();
+        temp->data.update();
+        cout << "Updated successfully.\n";
+    } else {
+        cout << "Passenger not found.\n";
+    }
+}
+
+void DLL::sort() {
+    if (!head || !head->next) return;
+
+    for (Node* i = head; i; i = i->next)
+        for (Node* j = i->next; j; j = j->next)
+            if (i->data > j->data)
+                swap(i->data, j->data);
+
+    cout << "List sorted by Passenger ID.\n";
+}
+
+Node* DLL::search(Data d) {
+    Node* temp = head;
+    while (temp) {
+        if (temp->data.match(d))
+            return temp;
+        temp = temp->next;
+    }
+    return NULL;
+}
+
+int main() {
+    DLL list;
+    int choice;
+    while (true) {
+        cout << "\n--- Railway Reservation Menu ---\n";
+        cout << "1. Create list\n2. Display list\n3. Insert passenger\n4. Delete passenger\n5. Update passenger\n6. Sort list\n7. Exit\nEnter choice: ";
+        cin >> choice;
+        switch (choice) {
+            case 1: list.create(); break;
+            case 2: list.display(); break;
+            case 3: list.insert(); break;
+            case 4: list.remove(); break;
+            case 5: list.update(); break;
+            case 6: list.sort(); break;
+            case 7: cout << "Exiting...\n"; return 0;
+            default: cout << "Invalid choice.\n"; break;
+        }
+    }
+}
+#include<iostream>
+#include<string>
+#include<cstring>
+#include<cmath>
+#include<sstream>
+#define MAX 50
+
+using namespace std;
+
+class Stack
+{   
+    public:
+    int top;
+    string st[MAX];
+    Stack(){
+        top = -1;
+    }
+    bool isempty();
+    bool isfull();
+    void push(string s1);
+    string pop();
+};
+
+class Stack_eval
+{
+    public:
+    int top;
+    float st[MAX];
+    Stack_eval(){
+        top = -1;
+    }
+    bool isempty();
+    bool isfull();
+    void push(float val);
+    float pop();
+};
+
+
+class expression
+{
+    public:
+    bool isoperator(char c);
+    int optr_precedence(string c) ;
+    void prefix_to_infix();
+    void infix_to_postfix();
+    void postfix_evaluate();
+};
+
+bool Stack::isempty(){ return top == -1; }
+bool Stack::isfull(){ return top == MAX - 1; }
+
+void Stack::push(string s1){
+    if(isfull()){
+        cout << "Stack is full" << endl;
+    }
+    else{
+        st[++top] = s1;
+    }
+}
+
+string Stack::pop(){
+    if(isempty()){
+        return "empty"; 
+    }
+    else{
+        return st[top--];
+    }
+}
+
+bool Stack_eval::isempty(){ return top == -1; }
+bool Stack_eval::isfull(){ return top == MAX - 1; }
+
+void Stack_eval::push(float val){
+    if(isfull()){
+        cout << "Evaluation stack is full" << endl;
+    }
+    else{
+        st[++top] = val;
+    }
+}
+
+float Stack_eval::pop(){
+    if(isempty()){
+        cout << "Evaluation stack is empty! Invalid expression." << endl;
+        return 0;
+    }
+    else{
+        return st[top--];
+    }
+}
+
+int expression::optr_precedence(string c) 
+{
+    if(c == "+" || c == "-") return 1;
+    else if(c == "*" || c == "/") return 2;
+    else if(c == "^") return 3;
+    else return 0;
+}
+
+bool expression::isoperator(char c){
+    return (c == '+' || c == '-' || c == '*' || c == '/' || c == '^');
+}
+
+void expression::infix_to_postfix(){
+    Stack s;
+    string infix, postfix;
+    cout << "Enter the infix expression: " << endl;
+    cin.ignore();
+    getline(cin, infix);
+
+    string number = "";
+    for(int i = 0; i < infix.length(); i++){
+        char current = infix[i];
+
+        if(isdigit(current) || current == '.'){
+            number += current;
+            if(i == infix.length() - 1 || (!isdigit(infix[i+1]) && infix[i+1] != '.')){
+                postfix += number + " ";
+                number = "";
+            }
+        }
+        else if(isalpha(current)){
+            postfix += current;
+            postfix += " ";
+        }
+        else if(current == '('){
+            s.push("(");
+        }
+        else if(current == ')'){
+            while(!s.isempty() && s.st[s.top] != "("){
+                postfix += s.pop() + " ";
+            }
+            if(!s.isempty()) s.pop();
+        }
+        else if(isoperator(current)){
+            string currOp(1, current);
+            while(!s.isempty() && optr_precedence(currOp) <= optr_precedence(s.st[s.top])){
+                postfix += s.pop() + " ";
+            }
+            s.push(currOp);
+        }
+    }
+    while(!s.isempty()){
+        postfix += s.pop() + " ";
+    }
+    cout << "\nThe postfix expression is: " << postfix << endl;
+}
+
+void expression::prefix_to_infix(){
+    Stack s;
+    string prefix;
+    cout << "Enter the prefix expression (operands must be single characters): " << endl;
+    cin.ignore();
+    getline(cin, prefix);
+
+    int len = prefix.length();
+    for(int i = len - 1; i >= 0; i--){
+        if(isoperator(prefix[i])){
+            string x = s.pop();
+            string y = s.pop();
+            string temp  = "(" + y + prefix[i] + x + ")";
+            s.push(temp);
+        }
+        else {
+            s.push(string(1, prefix[i]));
+        }
+    }
+    cout << "\nThe infix expression is: " << s.pop() << endl;
+}
+
+void expression::postfix_evaluate() {
+    Stack_eval s_eval;
+    string postfix;
+    cout << "Enter the postfix expression (use spaces between operands and operators): " << endl;
+    cin.ignore();
+    getline(cin, postfix);
+
+    stringstream ss(postfix);
+    string token;
+
+    while (ss >> token) {
+        if (optr_precedence(token) > 0 && token.length() == 1) {
+            if(s_eval.top < 1) {
+                cout << "Invalid postfix expression: Not enough operands for operator " << token << endl;
+                return;
+            }
+            float op2 = s_eval.pop();
+            float op1 = s_eval.pop();
+            float result = 0;
+
+            switch(token[0]) {
+                case '+': result = op1 + op2; break;
+                case '-': result = op1 - op2; break;
+                case '*': result = op1 * op2; break;
+                case '/': result = op1 / op2; break;
+                case '^': result = pow(op1, op2); break;
+            }
+            s_eval.push(result);
+        } else {
+            try {
+                s_eval.push(stof(token));
+            } catch (const invalid_argument& e) {
+                cout << "Invalid token in expression: " << token << endl;
+                return;
+            }
+        }
+    }
+
+    if (s_eval.top == 0) {
+        cout << "\nThe evaluated result is: " << s_eval.pop() << endl;
+    } else {
+        cout << "\nInvalid postfix expression: Too many operands." << endl;
+    }
+}
+
+int main(){
+    expression E;
+    int choice;
+    while(true){
+        cout << "\n--------------------MENU--------------------" << endl;
+        cout << "1. Infix to Postfix Conversion" << endl;
+        cout << "2. Prefix to Infix Conversion" << endl;
+        cout << "3. Postfix Expression Evaluation" << endl;
+        cout << "4. Exit" << endl;
+        cout << "------------------------------------------" << endl;
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch(choice){
+            case 1:
+                E.infix_to_postfix();
+                break;
+            case 2:
+                E.prefix_to_infix();
+                break;
+            case 3:
+                E.postfix_evaluate();
+                break;
+            case 4:
+                cout << "Exiting program. " << endl;
+                exit(0);
+            default:
+                cout << "Invalid choice. Please try again." << endl;
+        }
+    }
+    return 0;
+}
+#include <iostream>
+#include <vector>
+using namespace std;
+
+class HashTableLinear {
+private:
+    vector<int> table;
+    int size;
+    vector<bool> occupied;
+
+public:
+    HashTableLinear(int tableSize) {
+        size = tableSize;
+        table.resize(size, -1);
+        occupied.resize(size, false);
+    }
+
+    int hashFunction(int key) {
+        return key % 6;
+    }
+
+    void insert(int key) {
+        int index = hashFunction(key);
+        int originalIndex = index;
+        
+        while (occupied[index]) {
+            index = (index + 1) % size;
+            if (index == originalIndex) {
+                cout << "Hash table full" << endl;
+                return;
+            }
+        }
+        
+        table[index] = key;
+        occupied[index] = true;
+        cout << "Inserted " << key << " at position " << index << endl;
+    }
+
+    void display() {
+        cout << "\nHash table:" << endl;
+        cout << "Index Value Status" << endl;
+        for (int i = 0; i < size; i++) {
+            cout << i << " ";
+            if (occupied[i]) {
+                cout << table[i];
+            } else {
+                cout << "Empty";
+            }
+            cout << " " << (occupied[i] ? "Occupied" : "Empty") << endl;
+        }
+    }
+};
+
+int main() {
+    HashTableLinear ht(6);
+    
+    cout << "Cold drink flavours, linear probing" << endl;
+    
+    int flavors[] = {101, 205, 312, 418, 523, 101, 634};
+    int n = sizeof(flavors) / sizeof(flavors[0]);
+    
+    for (int i = 0; i < n; i++) {
+        ht.insert(flavors[i]);
+    }
+    
+    ht.display();
+    
+    return 0;
+}
+#include <iostream>
+using namespace std;
+#define MAX 10
+
+class InputRestrictedDeque {
+    int arr[MAX];
+    int front, rear;
+    
+public:
+    InputRestrictedDeque() {
+        front = -1;
+        rear = -1;
+    }
+    
+    bool isFull() {
+        return ((front == 0 && rear == MAX - 1) || (front == rear + 1));
+    }
+    
+    bool isEmpty() {
+        return (front == -1);
+    }
+    
+    void insertRear(int custID) {
+        if (isFull()) {
+            cout << "Mall is full.\n";
+            return;
+        }
+        if (front == -1) {
+            front = 0;
+            rear = 0;
+        } else if (rear == MAX - 1)
+            rear = 0;
+        else
+            rear = rear + 1;
+            
+        arr[rear] = custID;
+        cout << "Customer " << custID << " entered from rear gate.\n";
+    }
+    
+    // Can delete from both ends (Output not restricted)
+    void deleteFront() {
+        if (isEmpty()) {
+            cout << "No customers in the mall.\n";
+            return;
+        }
+        cout << "Customer " << arr[front] << " exited from front gate.\n";
+        if (front == rear) {
+            front = -1;
+            rear = -1;
+        } else if (front == MAX - 1)
+            front = 0;
+        else
+            front = front + 1;
+    }
+    
+    void deleteRear() {
+        if (isEmpty()) {
+            cout << "No customers.\n";
+            return;
+        }
+        cout << "Customer " << arr[rear] << " exited from rear gate.\n";
+        if (front == rear) {
+            front = -1;
+            rear = -1;
+        } else if (rear == 0)
+            rear = MAX - 1;
+        else
+            rear = rear - 1;
+    }
+    
+    void display() {
+        if (isEmpty()) {
+            cout << "Mall empty.\n";
+            return;
+        }
+        cout << "Customers: ";
+        int i = front;
+        while (true) {
+            cout << arr[i] << " ";
+            if (i == rear)
+                break;
+            i = (i + 1) % MAX;
+        }
+        cout << endl;
+    }
+};
+
+int main() {
+    InputRestrictedDeque mall;
+    int choice, id;
+    
+    cout << "Input restricted shopping mall:\n";
+    
+    do {
+        cout << "\n1. Enter from rear\n";
+        cout << "2. Exit from front\n";
+        cout << "3. Exit from rear\n";
+        cout << "4. Display customers\n";
+        cout << "5. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+        
+        switch (choice) {
+            case 1:
+                cout << "Enter Customer ID: ";
+                cin >> id;
+                mall.insertRear(id);
+                break;
+            case 2:
+                mall.deleteFront();
+                break;
+            case 3:
+                mall.deleteRear();
+                break;
+            case 4:
+                mall.display();
+                break;
+            case 5:
+                cout << "Exiting\n";
+                break;
+            default:
+                cout << "Invalid choice\n";
+        }
+    } while (choice != 5);
+    
+    return 0;
+}
+#include <iostream>
+using namespace std;
+#define MAX 10
+
+class OutputRestrictedDeque {
+    int arr[MAX];
+    int front, rear;
+    
+public:
+    OutputRestrictedDeque() {
+        front = -1;
+        rear = -1;
+    }
+    
+    bool isFull() {
+        return ((front == 0 && rear == MAX - 1) || (front == rear + 1));
+    }
+    
+    bool isEmpty() {
+        return (front == -1);
+    }
+    
+    void insertFront(int custID) {
+        if (isFull()) {
+            cout << "Mall is full";
+            return;
+        }
+        if (front == -1) {
+            front = 0;
+            rear = 0;
+        } else if (front == 0)
+            front = MAX - 1;
+        else
+            front = front - 1;
+            
+        arr[front] = custID;
+        cout << "Customer " << custID << " entered from front gate.\n";
+    }
+    
+    void insertRear(int custID) {
+        if (isFull()) {
+            cout << "Mall is full\n";
+            return;
+        }
+        if (front == -1) {
+            front = 0;
+            rear = 0;
+        } else if (rear == MAX - 1)
+            rear = 0;
+        else
+            rear = rear + 1;
+            
+        arr[rear] = custID;
+        cout << "Customer " << custID << " entered from rear gate.\n";
+    }
+    
+    void deleteFront() {
+        if (isEmpty()) {
+            cout << "Mall empty\n";
+            return;
+        }
+        cout << "Customer " << arr[front] << " exited from rear gate.\n";
+        if (front == rear) {
+            front = -1;
+            rear = -1;
+        } else if (front == MAX - 1)
+            front = 0;
+        else
+            front = front + 1;
+    }
+    
+    void display() {
+        if (isEmpty()) {
+            cout << "Mall is empty\n";
+            return;
+        }
+        cout << "Customers: ";
+        int i = front;
+        while (true) {
+            cout << arr[i] << " ";
+            if (i == rear)
+                break;
+            i = (i + 1) % MAX;
+        }
+        cout << endl;
+    }
+};
+
+int main() {
+    OutputRestrictedDeque mall;
+    int choice, id;
+    
+    cout << "Output restricted Shopping mall\n";
+    
+    do {
+        cout << "\n1. Enter from front\n";
+        cout << "2. Enter from rear\n";
+        cout << "3. Exit from front\n";
+        cout << "4. Display customers\n";
+        cout << "5. Exit\n";
+        cout << "Enter choice: ";
+        cin >> choice;
+        
+        switch (choice) {
+            case 1:
+                cout << "Enter Customer ID: ";
+                cin >> id;
+                mall.insertFront(id);
+                break;
+            case 2:
+                cout << "Enter Customer ID: ";
+                cin >> id;
+                mall.insertRear(id);
+                break;
+            case 3:
+                mall.deleteFront();
+                break;
+            case 4:
+                mall.display();
+                break;
+            case 5:
+                cout << "Exiting\n";
+                break;
+            default:
+                cout << "Invalid choice\n";
+        }
+    } while (choice != 5);
+    
+    return 0;
+}
+#include <iostream>
+#include <vector>
+using namespace std;
+
+class HashTableQuadratic {
+private:
+    vector<int> table;
+    int size;
+    vector<bool> occupied;
+
+public:
+    HashTableQuadratic(int tableSize) {
+        size = tableSize;
+        table.resize(size, -1);
+        occupied.resize(size, false);
+    }
+
+    int hashFunction(int key) {
+        return key % 11;
+    }
+
+    void insert(int key) {
+        int index = hashFunction(key);
+        int originalIndex = index;
+        int i = 0;
+        
+        while (occupied[index]) {
+            i++;
+            index = (originalIndex + i * i) % size;
+            if (i >= size) {
+                cout << "Hash table is full! Cannot insert " << key << endl;
+                return;
+            }
+        }
+        
+        table[index] = key;
+        occupied[index] = true;
+        cout << "Inserted " << key << " at position " << index << " (probes: " << i << ")" << endl;
+    }
+
+    void display() {
+        cout << "\nHash Table (Quadratic Probing):" << endl;
+        cout << "Category\tNo of Mangoes\tIndex" << endl;
+        for (int i = 0; i < size; i++) {
+            cout << i + 1 << "\t\t";
+            if (occupied[i]) {
+                cout << table[i];
+            } else {
+                cout << "Empty";
+            }
+            cout << "\t\t" << i << endl;
+        }
+    }
+};
+
+int main() {
+    HashTableQuadratic ht(11);
+    
+    cout << "=== Mango Varieties Hash Table (Quadratic Probing) ===" << endl;
+    
+    // Category 1-11 with number of mangoes
+    int mangoes[] = {25, 15, 10, 5, 11, 19, 16, 36, 42, 28, 32};
+    
+    cout << "Category\tNo of Mangoes" << endl;
+    for (int i = 0; i < 11; i++) {
+        cout << i + 1 << "\t\t" << mangoes[i] << endl;
+    }
+    
+    cout << "\nInserting into hash table:" << endl;
+    for (int i = 0; i < 11; i++) {
+        ht.insert(mangoes[i]);
+    }
+    
+    ht.display();
+    
+    return 0;
+}
+#include <iostream>
+#include <string>
+#include <iomanip>
+#include <vector>
+
+using namespace std;
+
+class Process {
+public:
+    int pid;
+    string name;
+    int burst_time;
+    int remaining_time;
+    int arrival_time;
+    int waiting_time;
+    int turnaround_time;
+    Process* next;
+
+    Process(int id, string pname, int burst, int arrival = 0) {
+        pid = id;
+        name = pname;
+        burst_time = burst;
+        remaining_time = burst;
+        arrival_time = arrival;
+        waiting_time = 0;
+        turnaround_time = 0;
+        next = nullptr;
+    }
+
+    void display() const {
+        cout << setw(5) << pid << setw(15) << name << setw(10) << burst_time 
+             << setw(15) << remaining_time << setw(10) << waiting_time 
+             << setw(15) << turnaround_time << endl;
+    }
+};
+
+class CircularQueue {
+private:
+    Process* front;
+    Process* rear;
+    int size;
+    int time_quantum;
+
+public:
+    CircularQueue(int quantum = 2) {
+        front = rear = nullptr;
+        size = 0;
+        time_quantum = quantum;
+    }
+
+    ~CircularQueue() {
+        while (!isEmpty()) {
+            dequeue();
+        }
+    }
+
+    bool isEmpty() const {
+        return front == nullptr;
+    }
+
+    int getSize() const {
+        return size;
+    }
+
+    void setTimeQuantum(int quantum) {
+        time_quantum = quantum;
+    }
+
+    int getTimeQuantum() const {
+        return time_quantum;
+    }
+
+    void enqueue(Process* process) {
+        if (isEmpty()) {
+            front = rear = process;
+            rear->next = front; // Circular link
+        } else {
+            rear->next = process;
+            rear = process;
+            rear->next = front; // Circular link
+        }
+        size++;
+    }
+
+    Process* dequeue() {
+        if (isEmpty()) {
+            return nullptr;
+        }
+
+        Process* temp = front;
+        
+        if (front == rear) {
+            // Only one element
+            front = rear = nullptr;
+        } else {
+            front = front->next;
+            rear->next = front; // Maintain circular link
+        }
+        
+        size--;
+        temp->next = nullptr;
+        return temp;
+    }
+
+    Process* peek() const {
+        return front;
+    }
+
+    void rotate() {
+        if (!isEmpty() && front != rear) {
+            front = front->next;
+            rear = rear->next;
+        }
+    }
+
+    void displayQueue() const {
+        if (isEmpty()) {
+            cout << "Queue is empty!" << endl;
+            return;
+        }
+
+        cout << "\nCurrent Queue Status:" << endl;
+        cout << setw(5) << "PID" << setw(15) << "Name" << setw(10) << "Burst" 
+             << setw(15) << "Remaining" << setw(10) << "Waiting" 
+             << setw(15) << "Turnaround" << endl;
+        cout << string(75, '-') << endl;
+
+        Process* current = front;
+        do {
+            current->display();
+            current = current->next;
+        } while (current != front);
+    }
+
+    vector<Process*> getAllProcesses() const {
+        vector<Process*> processes;
+        if (isEmpty()) return processes;
+
+        Process* current = front;
+        do {
+            processes.push_back(current);
+            current = current->next;
+        } while (current != front);
+
+        return processes;
+    }
+};
+
+class RoundRobinScheduler {
+private:
+    CircularQueue ready_queue;
+    vector<Process*> completed_processes;
+    int current_time;
+
+public:
+    RoundRobinScheduler(int quantum = 2) : ready_queue(quantum), current_time(0) {}
+
+    void addProcess(int pid, string name, int burst_time, int arrival_time = 0) {
+        Process* new_process = new Process(pid, name, burst_time, arrival_time);
+        ready_queue.enqueue(new_process);
+        cout << "Process '" << name << "' added to the ready queue." << endl;
+    }
+
+    void executeTimeSlice() {
+        if (ready_queue.isEmpty()) {
+            cout << "No processes in the ready queue!" << endl;
+            return;
+        }
+
+        Process* current_process = ready_queue.peek();
+        cout << "\n--- Executing Time Slice ---" << endl;
+        cout << "Current Time: " << current_time << endl;
+        cout << "Executing Process: " << current_process->name 
+             << " (PID: " << current_process->pid << ")" << endl;
+
+        int execution_time = min(ready_queue.getTimeQuantum(), current_process->remaining_time);
+        
+        cout << "Execution time for this slice: " << execution_time << " units" << endl;
+        
+        current_process->remaining_time -= execution_time;
+        current_time += execution_time;
+
+        // Update waiting times for other processes
+        Process* temp = ready_queue.peek()->next;
+        while (temp != ready_queue.peek()) {
+            if (temp->remaining_time > 0) {
+                temp->waiting_time += execution_time;
+            }
+            temp = temp->next;
+        }
+
+        if (current_process->remaining_time <= 0) {
+            // Process completed
+            current_process->turnaround_time = current_time - current_process->arrival_time;
+            Process* completed = ready_queue.dequeue();
+            completed_processes.push_back(completed);
+            cout << "Process '" << completed->name << "' completed execution!" << endl;
+        } else {
+            // Process not completed, rotate the queue
+            cout << "Process '" << current_process->name << "' still has " 
+                 << current_process->remaining_time << " units remaining." << endl;
+            ready_queue.rotate();
+        }
+    }
+
+    void executeUntilCompletion() {
+        if (ready_queue.isEmpty()) {
+            cout << "No processes to execute!" << endl;
+            return;
+        }
+
+        cout << "\n--- Executing All Processes Until Completion ---" << endl;
+        int iterations = 0;
+        const int MAX_ITERATIONS = 1000; // Safety limit
+
+        while (!ready_queue.isEmpty() && iterations < MAX_ITERATIONS) {
+            executeTimeSlice();
+            iterations++;
+        }
+
+        if (iterations >= MAX_ITERATIONS) {
+            cout << "Warning: Maximum iterations reached!" << endl;
+        }
+
+        cout << "\nAll processes completed execution!" << endl;
+    }
+
+    void displayStatistics() const {
+        cout << "\n=== SCHEDULING STATISTICS ===" << endl;
+        
+        if (!completed_processes.empty()) {
+            cout << "\nCompleted Processes:" << endl;
+            cout << setw(5) << "PID" << setw(15) << "Name" << setw(10) << "Burst" 
+                 << setw(10) << "Waiting" << setw(15) << "Turnaround" << endl;
+            cout << string(60, '-') << endl;
+
+            double total_waiting = 0, total_turnaround = 0;
+
+            for (const auto& process : completed_processes) {
+                process->display();
+                total_waiting += process->waiting_time;
+                total_turnaround += process->turnaround_time;
+            }
+
+            cout << "\nAverage Waiting Time: " << total_waiting / completed_processes.size() << endl;
+            cout << "Average Turnaround Time: " << total_turnaround / completed_processes.size() << endl;
+        }
+
+        if (!ready_queue.isEmpty()) {
+            cout << "\nRemaining Processes in Ready Queue:" << endl;
+            ready_queue.displayQueue();
+        }
+    }
+
+    void displayCurrentState() const {
+        cout << "\n=== CURRENT SYSTEM STATE ===" << endl;
+        cout << "Current Time: " << current_time << endl;
+        cout << "Time Quantum: " << ready_queue.getTimeQuantum() << endl;
+        cout << "Processes in ready queue: " << ready_queue.getSize() << endl;
+        cout << "Completed processes: " << completed_processes.size() << endl;
+        
+        if (!ready_queue.isEmpty()) {
+            ready_queue.displayQueue();
+        }
+        
+        if (!completed_processes.empty()) {
+            cout << "\nCompleted Processes:" << endl;
+            cout << setw(5) << "PID" << setw(15) << "Name" << setw(10) << "Burst" 
+                 << setw(10) << "Waiting" << setw(15) << "Turnaround" << endl;
+            cout << string(60, '-') << endl;
+            
+            for (const auto& process : completed_processes) {
+                process->display();
+            }
+        }
+    }
+
+    void clearAllProcesses() {
+        while (!ready_queue.isEmpty()) {
+            delete ready_queue.dequeue();
+        }
+        
+        for (auto process : completed_processes) {
+            delete process;
+        }
+        completed_processes.clear();
+        
+        current_time = 0;
+        cout << "All processes cleared from the system." << endl;
+    }
+
+    void setTimeQuantum(int quantum) {
+        ready_queue.setTimeQuantum(quantum);
+        cout << "Time quantum set to " << quantum << " units." << endl;
+    }
+};
+
+void displayMenu() {
+    cout << "\n=== ROUND ROBIN SCHEDULER ===" << endl;
+    cout << "1. Add Process" << endl;
+    cout << "2. Execute Single Time Slice" << endl;
+    cout << "3. Execute Until Completion" << endl;
+    cout << "4. Display Current State" << endl;
+    cout << "5. Display Statistics" << endl;
+    cout << "6. Set Time Quantum" << endl;
+    cout << "7. Clear All Processes" << endl;
+    cout << "8. Exit" << endl;
+    cout << "Choose an option: ";
+}
+
+int main() {
+    RoundRobinScheduler scheduler;
+    int choice;
+    int pid_counter = 1;
+
+    cout << "=== ROUND ROBIN SCHEDULING SIMULATOR ===" << endl;
+    cout << "Using Circular Queue implemented with Linked List" << endl;
+
+    while (true) {
+        displayMenu();
+        cin >> choice;
+
+        switch (choice) {
+            case 1: {
+                string name;
+                int burst_time, arrival_time;
+                
+                cout << "Enter process name: ";
+                cin >> name;
+                cout << "Enter burst time: ";
+                cin >> burst_time;
+                cout << "Enter arrival time (default 0): ";
+                cin >> arrival_time;
+                
+                scheduler.addProcess(pid_counter++, name, burst_time, arrival_time);
+                break;
+            }
+            
+            case 2:
+                scheduler.executeTimeSlice();
+                break;
+            
+            case 3:
+                scheduler.executeUntilCompletion();
+                break;
+            
+            case 4:
+                scheduler.displayCurrentState();
+                break;
+            
+            case 5:
+                scheduler.displayStatistics();
+                break;
+            
+            case 6: {
+                int quantum;
+                cout << "Enter new time quantum: ";
+                cin >> quantum;
+                scheduler.setTimeQuantum(quantum);
+                break;
+            }
+            
+            case 7:
+                scheduler.clearAllProcesses();
+                pid_counter = 1; // Reset PID counter
+                break;
+            
+            case 8:
+                cout << "Exiting Round Robin Scheduler. Goodbye!" << endl;
+                return 0;
+            
+            default:
+                cout << "Invalid choice! Please try again." << endl;
+        }
+    }
+
+    return 0;
+}
+#include <iostream>
+#include <list>
+#include <vector>
+using namespace std;
+
+class HashTableChaining {
+private:
+    vector<list<int>> table;
+    int size;
+
+public:
+    HashTableChaining(int tableSize) {
+        size = tableSize;
+        table.resize(size);
+    }
+
+    int hashFunction(int key) {
+        return key % 20;
+    }
+
+    void insert(int key) {
+        int index = hashFunction(key);
+        table[index].push_back(key);
+        cout << "Inserted " << key << " at bucket " << index << endl;
+    }
+
+    void display() {
+        cout << "\nHash table:" << endl;
+        cout << "Index Values" << endl;
+        for (int i = 0; i < size; i++) {
+            cout << i << "\t";
+            if (table[i].empty()) {
+                cout << "Empty";
+            } else {
+                for (auto it = table[i].begin(); it != table[i].end(); ++it) {
+                    cout << *it;
+                    if (next(it) != table[i].end()) {
+                        cout << " -> ";
+                    }
+                }
+            }
+            cout << endl;
+        }
+    }
+};
+
+int main() {
+    HashTableChaining ht(20);
+    
+    cout << "Student marks hash table, separate chaining" << endl;
+    
+    int marks[] = {33, 56, 78, 12, 10, 67, 89, 99, 100, 23, 59, 90, 91, 20};
+    int n = sizeof(marks) / sizeof(marks[0]);
+    
+    for (int i = 0; i < n; i++) {
+        ht.insert(marks[i]);
+    }
+    
+    ht.display();
+    
+    return 0;
+}
+
+#include <iostream>
+using namespace std;
+
+struct Data {
+    int id;
+
+    void read() {
+        cout << "Enter Passenger ID: ";
+        cin >> id;
+    }
+
+    void display() {
+        cout << "Passenger ID: " << id << endl;
+    }
+
+    bool match(Data d) {
+        return id == d.id;
+    }
+
+    void update() {
+        cout << "Enter new Passenger ID: ";
+        cin >> id;
+    }
+
+    bool operator>(const Data& other) { return id > other.id; }
+    bool operator<(const Data& other) { return id < other.id; }
+};
+
+struct Node {
+    Data data;
+    Node* next;
+    Node(Data d) : data(d), next(NULL) {}
+};
+
+class SLL {
+public:
+    Node* head;
+    SLL() { head = NULL; }
+
+    void create();
+    void display();
+    void insert();
+    void remove();
+    void update();
+    void sort();
+    Node* search(Data);
+};
+
+void SLL::create() {
+    if (head != NULL) {
+        cout << "List already exists.\n";
+        return;
+    }
+
+    cout << "Creating passenger list...\n";
+    Data d;
+    d.read();
+    head = new Node(d);
+
+    int choice;
+    Node* current = head;
+    do {
+        cout << "1. Add another passenger\n0. Stop\nEnter choice: ";
+        cin >> choice;
+        if (choice == 1) {
+            d.read();
+            Node* temp = new Node(d);
+            current->next = temp;
+            current = temp;
+        }
+    } while (choice != 0);
+}
+
+void SLL::display() {
+    if (!head) {
+        cout << "No passengers in the list.\n";
+        return;
+    }
+    cout << "\n--- Passenger List ---\n";
+    Node* temp = head;
+    while (temp) {
+        temp->data.display();
+        temp = temp->next;
+    }
+    cout << "----------------------\n";
+}
+
+void SLL::insert() {
+    int choice;
+    Data d;
+    cout << "\nInsert Menu:\n";
+    cout << "1. At beginning\n2. At end\n3. After specific ID\nEnter choice: ";
+    cin >> choice;
+    d.read();
+    Node* new_node = new Node(d);
+
+    if (choice == 1) {  // Insert at head
+        new_node->next = head;
+        head = new_node;
+    } 
+    else if (choice == 2) {  // Insert at end
+        if (!head) head = new_node;
+        else {
+            Node* temp = head;
+            while (temp->next) temp = temp->next;
+            temp->next = new_node;
+        }
+    } 
+    else if (choice == 3) {  // Insert after value
+        if (!head) {
+            cout << "List is empty.\n";
+            delete new_node;
+            return;
+        }
+        Data target;
+        cout << "Enter Passenger ID to insert after: ";
+        cin >> target.id;
+
+        Node* temp = head;
+        while (temp && !temp->data.match(target))
+            temp = temp->next;
+
+        if (temp) {
+            new_node->next = temp->next;
+            temp->next = new_node;
+        } else {
+            cout << "Passenger not found.\n";
+            delete new_node;
+        }
+    } 
+    else {
+        cout << "Invalid choice.\n";
+        delete new_node;
+    }
+}
+
+void SLL::remove() {
+    if (!head) {
+        cout << "List is empty.\n";
+        return;
+    }
+
+    int choice;
+    cout << "\nDelete Menu:\n";
+    cout << "1. First passenger\n2. Last passenger\n3. By ID\nEnter choice: ";
+    cin >> choice;
+
+    if (choice == 1) {  // Delete first
+        Node* temp = head;
+        head = head->next;
+        delete temp;
+    } 
+    else if (choice == 2) {  // Delete last
+        if (!head->next) {
+            delete head;
+            head = NULL;
+        } else {
+            Node* temp = head;
+            while (temp->next->next)
+                temp = temp->next;
+            delete temp->next;
+            temp->next = NULL;
+        }
+    } 
+    else if (choice == 3) {  // Delete by value
+        Data target;
+        cout << "Enter Passenger ID to delete: ";
+        cin >> target.id;
+
+        if (head->data.match(target)) {
+            Node* temp = head;
+            head = head->next;
+            delete temp;
+            return;
+        }
+
+        Node* temp = head;
+        while (temp->next && !temp->next->data.match(target))
+            temp = temp->next;
+
+        if (temp->next) {
+            Node* del = temp->next;
+            temp->next = temp->next->next;
+            delete del;
+        } else {
+            cout << "Passenger not found.\n";
+        }
+    } 
+    else {
+        cout << "Invalid choice.\n";
+    }
+}
+
+void SLL::update() {
+    if (!head) {
+        cout << "List is empty.\n";
+        return;
+    }
+
+    Data target;
+    cout << "Enter Passenger ID to update: ";
+    cin >> target.id;
+
+    Node* temp = search(target);
+    if (temp) {
+        cout << "Current info: ";
+        temp->data.display();
+        temp->data.update();
+        cout << "Updated successfully.\n";
+    } else {
+        cout << "Passenger not found.\n";
+    }
+}
+
+void SLL::sort() {
+    if (!head || !head->next) return;
+
+    Node* i = head;
+    while (i) {
+        Node* j = i->next;
+        while (j) {
+            if (i->data > j->data) {
+                Data tmp = i->data;
+                i->data = j->data;
+                j->data = tmp;
+            }
+            j = j->next;
+        }
+        i = i->next;
+    }
+    cout << "List sorted by Passenger ID.\n";
+}
+
+Node* SLL::search(Data d) {
+    Node* temp = head;
+    while (temp) {
+        if (temp->data.match(d))
+            return temp;
+        temp = temp->next;
+    }
+    return NULL;
+}
+
+int main() {
+    SLL list;
+    int choice;
+    while (true) {
+        cout << "\n--- Railway Reservation Menu ---\n";
+        cout << "1. Create list\n2. Display list\n3. Insert passenger\n4. Delete passenger\n5. Update passenger\n6. Sort list\n7. Exit\nEnter choice: ";
+        cin >> choice;
+        switch (choice) {
+            case 1: list.create(); break;
+            case 2: list.display(); break;
+            case 3: list.insert(); break;
+            case 4: list.remove(); break;
+            case 5: list.update(); break;
+            case 6: list.sort(); break;
+            case 7: cout << "Exiting...\n"; return 0;
+            default: cout << "Invalid choice.\n"; break;
+        }
+    }
+}
+
+#include <bits/stdc++.h>
+using namespace std;
+
+bool ok(int g[4][4], int r, int c, int v){
+    for(int i=0;i<4;i++){
+        if(g[r][i]==v || g[i][c]==v) return false;
+    }
+    int sr=r/2*2, sc=c/2*2;
+    for(int i=0;i<2;i++) for(int j=0;j<2;j++)
+        if(g[sr+i][sc+j]==v) return false;
+    return true;
+}
+
+bool solve(int g[4][4], int r=0, int c=0){
+    if(r==4) return true;
+    int nr=r, nc=c+1;
+    if(nc==4){ nc=0; nr++; }
+    if(g[r][c]!=0) return solve(g,nr,nc);
+    for(int v=1;v<=4;v++){
+        if(ok(g,r,c,v)){
+            g[r][c]=v;
+            if(solve(g,nr,nc)) return true;
+            g[r][c]=0;
+        }
+    }
+    return false;
+}
+
+int main(){
+    int g[4][4]={
+        {1,0,0,0},
+        {0,0,0,0},
+        {0,3,0,0},
+        {2,0,0,0}
+    };
+
+    cout<<"Example:\n";
+    for(int i=0;i<4;i++){
+        for(int j=0;j<4;j++) cout<<g[i][j]<<" ";
+        cout<<"\n";
+    }
+
+    int s[4][4];
+    memcpy(s,g,sizeof(g));
+    cout<<"\nSolution:\n";
+    if(solve(s)){
+        for(int i=0;i<4;i++){
+            for(int j=0;j<4;j++) cout<<s[i][j]<<" ";
+            cout<<"\n";
+        }
+    } else cout<<"No solution";
+}
+#include <iostream>
+#include <typeinfo>
+
+using namespace std;
+
+class Base {
+public:
+    virtual void display() {
+        cout << "Base" << endl;
+    }
+    virtual ~Base() {}
+};
+
+class Derived : public Base {
+public:
+    void display() override {
+        cout << "Derived" << endl;
+    }
+    
+    void special() {
+        cout << "Special method" << endl;
+    }
+};
+
+void demonstrate_static_cast() {
+    cout << "static_cast examples:" << endl;
+    
+    double d = 3.14;
+    int i = static_cast<int>(d);
+    cout << "Double to int: " << i << endl;
+    
+    Base* base_ptr = new Derived();
+    Derived* derived_ptr = static_cast<Derived*>(base_ptr);
+    derived_ptr->display();
+    
+    delete base_ptr;
+}
+
+void demonstrate_dynamic_cast() {
+    cout << "dynamic_cast examples:" << endl;
+    
+    Base* base1 = new Derived();
+    Base* base2 = new Base();
+    
+    Derived* derived1 = dynamic_cast<Derived*>(base1);
+    if (derived1) {
+        derived1->special();
+    }
+    
+    Derived* derived2 = dynamic_cast<Derived*>(base2);
+    if (!derived2) {
+        cout << "Dynamic cast failed" << endl;
+    }
+    
+    delete base1;
+    delete base2;
+}
+
+void demonstrate_const_cast() {
+    cout << "const_cast examples:" << endl;
+    
+    const int x = 10;
+    const int* ptr = &x;
+    
+    int* modifiable = const_cast<int*>(ptr);
+    *modifiable = 20;
+    
+    cout << "Modified value: " << *modifiable << endl;
+}
+
+void demonstrate_reinterpret_cast() {
+    cout << "reinterpret_cast:" << endl;
+    
+    int num = 65;
+    char* char_ptr = reinterpret_cast<char*>(&num);
+    cout << *char_ptr << endl;
+    
+    int* int_ptr = &num;
+    long addr = reinterpret_cast<long>(int_ptr);
+    cout << addr << endl;
+}
+
+int main() {
+    demonstrate_static_cast();
+    cout << endl;
+    
+    demonstrate_dynamic_cast();
+    cout << endl;
+    
+    demonstrate_const_cast();
+    cout << endl;
+    
+    demonstrate_reinterpret_cast();
+    
+    return 0;
+}
